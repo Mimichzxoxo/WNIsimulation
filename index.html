@@ -410,6 +410,15 @@
       pointer-events: none;
     }
 
+    .canvas-stage.age-transition::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(251, 191, 36, 0.32), transparent 68%);
+      animation: ageTransition 0.72s ease-out forwards;
+    }
+
     .canvas-overlay-br {
       position: absolute;
       bottom: 10px;
@@ -691,6 +700,11 @@
       gap: 8px;
     }
 
+    .choices-list.is-resolving .choice-btn:not(.picked) {
+      pointer-events: none;
+      animation: choiceDismiss 0.28s ease forwards;
+    }
+
     .choice-btn {
       min-height: 48px;
       width: 100%;
@@ -708,6 +722,12 @@
     .choice-btn:hover:not(:disabled) {
       background: #1a253b;
       border-color: #fbbf24;
+    }
+
+    .choice-btn.picked {
+      border-color: #fbbf24;
+      background: linear-gradient(110deg, rgba(245, 158, 11, 0.22), #111827);
+      animation: choicePick 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }
 
     .choice-letter {
@@ -744,7 +764,7 @@
       border: 1px solid rgba(59, 130, 246, 0.45);
       border-radius: var(--radius-md);
       padding: 12px;
-      animation: popIn 0.25s ease;
+      animation: resultReveal 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
     .result-row {
@@ -766,7 +786,16 @@
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 6px;
+      animation: badgePop 0.32s ease both;
     }
+
+    .result-badges .fx-badge:nth-child(2) { animation-delay: 0.04s; }
+    .result-badges .fx-badge:nth-child(3) { animation-delay: 0.08s; }
+    .result-badges .fx-badge:nth-child(4) { animation-delay: 0.12s; }
+    .result-badges .fx-badge:nth-child(5) { animation-delay: 0.16s; }
+    .result-badges .fx-badge:nth-child(6) { animation-delay: 0.20s; }
+    .result-badges .fx-badge:nth-child(7) { animation-delay: 0.24s; }
+    .result-badges .fx-badge:nth-child(8) { animation-delay: 0.28s; }
 
     .fx-pos {
       background: rgba(16, 185, 129, 0.18);
@@ -1121,6 +1150,581 @@
       0% { opacity: 0; transform: scale(0.96) translateY(6px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    @keyframes choicePick {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.025); box-shadow: 0 0 24px rgba(245, 158, 11, 0.28); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes choiceDismiss {
+      to { opacity: 0; transform: translateX(14px) scale(0.98); }
+    }
+
+    @keyframes resultReveal {
+      0% { opacity: 0; transform: translateY(14px) scale(0.97); }
+      70% { opacity: 1; transform: translateY(-2px) scale(1.01); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes ageTransition {
+      0% { opacity: 0.95; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes badgePop {
+      from { opacity: 0; transform: translateY(5px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Gameplay UI polish */
+    :root {
+      --bg-main: #080d18;
+      --bg-panel: #111a2b;
+      --bg-card: #17243a;
+      --bg-input: #0c1423;
+      --border: #293a55;
+      --text-main: #f5f7fb;
+      --text-muted: #a4b2c7;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      background-image:
+        radial-gradient(ellipse at 8% 0%, rgba(59, 130, 246, 0.17), transparent 38%),
+        radial-gradient(ellipse at 94% 18%, rgba(16, 185, 129, 0.10), transparent 34%),
+        linear-gradient(180deg, #080d18, #0b1220 55%, #080d18);
+    }
+
+    .top-header {
+      background: rgba(8, 13, 24, 0.94);
+      border-bottom-color: rgba(148, 163, 184, 0.17);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-inner {
+      min-height: 60px;
+      padding: 9px 18px;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      letter-spacing: -0.2px;
+    }
+
+    .pill-year,
+    .pill-age {
+      border-radius: 999px;
+      padding: 4px 9px;
+    }
+
+    .news-bar {
+      padding: 6px 0;
+    }
+
+    .news-tag {
+      border-radius: 999px;
+      padding: 3px 9px;
+    }
+
+    .ticker-track {
+      font-size: 12.5px;
+    }
+
+    .main-container {
+      max-width: 1360px;
+      gap: 18px;
+      padding: 18px 20px 36px;
+    }
+
+    .col-stack {
+      gap: 16px;
+    }
+
+    .card {
+      background: linear-gradient(160deg, rgba(20, 31, 51, 0.98), rgba(12, 20, 35, 0.98));
+      border-color: rgba(116, 139, 173, 0.23);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.035);
+    }
+
+    .card-pad {
+      padding: 18px;
+    }
+
+    .char-header {
+      padding: 14px 18px;
+      background: linear-gradient(110deg, rgba(10, 17, 30, 0.96), rgba(19, 30, 49, 0.92));
+    }
+
+    .char-name {
+      font-size: 18px;
+      letter-spacing: -0.35px;
+    }
+
+    .char-sub {
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .canvas-stage {
+      height: 245px;
+      background:
+        radial-gradient(ellipse at 50% 95%, rgba(59, 130, 246, 0.12), transparent 62%),
+        #080d18;
+    }
+
+    @media (min-width: 640px) {
+      .canvas-stage {
+        height: 280px;
+      }
+    }
+
+    .canvas-overlay-tl,
+    .canvas-overlay-br {
+      padding: 6px 11px;
+      border-color: rgba(226, 232, 240, 0.18);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .saldo-box {
+      padding: 15px 16px;
+      border-radius: 16px;
+      background: linear-gradient(120deg, rgba(6, 78, 59, 0.58), rgba(15, 23, 42, 0.9));
+    }
+
+    .saldo-amount {
+      font-size: 23px;
+      letter-spacing: -0.5px;
+    }
+
+    .job-strip {
+      min-height: 48px;
+      border-radius: 12px;
+    }
+
+    .stats-grid {
+      gap: 10px;
+    }
+
+    .stat-item {
+      border-color: rgba(116, 139, 173, 0.16);
+      border-radius: 12px;
+      padding: 10px 11px;
+      background: rgba(8, 14, 25, 0.72);
+    }
+
+    .stat-top {
+      font-size: 11.5px;
+    }
+
+    .bar-bg {
+      height: 7px;
+    }
+
+    .macro-grid {
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .macro-cell {
+      border-color: rgba(116, 139, 173, 0.18);
+      border-radius: 11px;
+      padding: 9px 7px;
+      background: rgba(8, 14, 25, 0.72);
+    }
+
+    .macro-num {
+      font-size: 13.5px;
+    }
+
+    .next-year-bar {
+      gap: 14px;
+    }
+
+    .btn-next-year {
+      min-height: 52px;
+      padding: 12px 22px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #2878f0, #5648e8);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-next-year:hover:not(:disabled) {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+
+    .mob-nav {
+      position: sticky;
+      top: 72px;
+      z-index: 20;
+      padding: 5px;
+      border-color: rgba(116, 139, 173, 0.2);
+      background: rgba(12, 20, 35, 0.95);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+    }
+
+    .mob-nav-btn {
+      border-radius: 10px;
+      min-height: 44px;
+    }
+
+    .mob-nav-btn.active {
+      background: linear-gradient(135deg, #286fe0, #4842c8);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+    }
+
+    .dilemma-card {
+      border: 1px solid rgba(245, 158, 11, 0.38);
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(245, 158, 11, 0.07), transparent 42%),
+        linear-gradient(160deg, rgba(24, 32, 49, 0.99), rgba(12, 20, 35, 0.99));
+    }
+
+    body.hard-mode .dilemma-card {
+      border-color: rgba(244, 63, 94, 0.42);
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(244, 63, 94, 0.08), transparent 42%),
+        linear-gradient(160deg, rgba(31, 25, 39, 0.99), rgba(16, 19, 31, 0.99));
+    }
+
+    .dilemma-meta {
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .dilemma-cat {
+      padding: 5px 10px;
+      font-size: 11.5px;
+    }
+
+    .dilemma-title {
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.25;
+      letter-spacing: -0.35px;
+      margin-bottom: 8px;
+    }
+
+    .dilemma-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .choices-list {
+      gap: 10px;
+    }
+
+    .choice-btn {
+      min-height: 60px;
+      padding: 12px 14px;
+      gap: 12px;
+      border-color: rgba(116, 139, 173, 0.26);
+      border-radius: 14px;
+      background: linear-gradient(110deg, rgba(11, 19, 33, 0.98), rgba(16, 27, 45, 0.96));
+    }
+
+    .choice-btn::after {
+      content: "";
+      flex: 0 0 auto;
+      margin-left: auto;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #fbbf24;
+      border-right: 2px solid #fbbf24;
+      transform: rotate(45deg);
+      transition: transform 0.15s ease;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: linear-gradient(110deg, rgba(25, 39, 63, 0.98), rgba(20, 33, 54, 0.98));
+      border-color: rgba(251, 191, 36, 0.7);
+    }
+
+    .choice-btn:hover:not(:disabled)::after {
+      transform: translateX(3px) rotate(45deg);
+    }
+
+    .choice-letter {
+      width: 32px;
+      height: 32px;
+      color: #ffda7a;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .choice-text {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .result-box {
+      padding: 15px;
+      border-color: rgba(59, 130, 246, 0.4);
+      background: rgba(11, 22, 38, 0.88);
+    }
+
+    .act-tabs-grid {
+      background: rgba(8, 14, 25, 0.75);
+      border-color: rgba(116, 139, 173, 0.18);
+    }
+
+    .act-tab-btn {
+      min-height: 52px;
+      border-radius: 10px;
+    }
+
+    .act-tab-btn.active {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(59, 130, 246, 0.13));
+      border-color: rgba(96, 165, 250, 0.65);
+    }
+
+    .act-item-btn {
+      min-height: 62px;
+      border-radius: 13px;
+      border-color: rgba(116, 139, 173, 0.2);
+      background: linear-gradient(110deg, rgba(10, 17, 30, 0.92), rgba(15, 25, 42, 0.92));
+    }
+
+    .act-item-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(96, 165, 250, 0.65);
+    }
+
+    .journal-entry {
+      border-color: rgba(116, 139, 173, 0.18);
+      border-radius: 10px;
+      line-height: 1.55;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #fbbf24;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 979px) {
+      .main-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 12px 28px;
+      }
+
+      .main-container > .col-stack {
+        display: contents;
+      }
+
+      .main-container > .col-stack:first-child > :first-child {
+        order: 1;
+      }
+
+      .main-container > .col-stack:nth-child(2) > .mob-nav {
+        order: 2;
+      }
+
+      .main-container > .col-stack:nth-child(2) > #panel-story,
+      .main-container > .col-stack:nth-child(2) > #panel-activity,
+      .main-container > .col-stack:nth-child(2) > #panel-journal {
+        order: 3;
+      }
+
+      .main-container > .col-stack:nth-child(2) > :first-child {
+        order: 4;
+      }
+
+      .main-container > .col-stack:nth-child(2) > #unlock-banner {
+        order: 5;
+      }
+
+      .main-container > .col-stack:first-child > :nth-child(2) {
+        order: 6;
+      }
+
+      .main-container > .col-stack {
+        gap: 12px;
+      }
+
+      .canvas-stage {
+        height: 220px;
+      }
+
+      .card-pad {
+        padding: 15px;
+      }
+
+      .char-header {
+        padding: 12px 14px;
+      }
+
+      .dilemma-card {
+        scroll-margin-top: 130px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .header-inner {
+        min-height: 56px;
+        padding: 7px 10px;
+        gap: 5px;
+      }
+
+      .brand-group {
+        gap: 6px;
+      }
+
+      .flag-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        font-size: 15px;
+      }
+
+      .brand-title {
+        font-size: 11.5px;
+      }
+
+      .header-actions {
+        gap: 4px;
+      }
+
+      .mode-badge {
+        max-width: 104px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 9px;
+        padding: 4px 7px;
+      }
+
+      .btn-sound {
+        min-height: 32px;
+        padding: 0 8px;
+        gap: 3px;
+        font-size: 10px;
+      }
+
+      .news-tag {
+        max-width: 142px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 9px;
+      }
+
+      .ticker-track {
+        font-size: 11px;
+      }
+
+      .canvas-stage {
+        height: 176px;
+      }
+
+      .saldo-amount {
+        font-size: 20px;
+      }
+
+      .stat-item {
+        padding: 9px;
+      }
+
+      .dilemma-title {
+        font-size: 18px;
+      }
+
+      .dilemma-desc {
+        font-size: 13px;
+      }
+
+      .choice-btn {
+        min-height: 58px;
+        padding: 10px;
+        gap: 9px;
+      }
+
+      .choice-text {
+        font-size: 12px;
+      }
+
+      .act-item-btn {
+        align-items: flex-start;
+      }
+
+      .act-item-tag {
+        white-space: normal;
+        max-width: 105px;
+      }
+    }
+
+    .history-backdrop {
+      z-index: 80;
+    }
+
+    .history-box {
+      max-width: 560px;
+    }
+
+    .history-hero {
+      text-align: left;
+      background: linear-gradient(135deg, #172554, #0f172a 58%, #164e63);
+    }
+
+    .history-kicker {
+      color: #7dd3fc;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .history-hero h2 {
+      margin: 7px 0 3px;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .history-period {
+      color: #fcd34d;
+      font: 700 12px var(--font-mono);
+    }
+
+    .history-impact {
+      padding: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    .history-impact h3 {
+      margin: 0 0 5px;
+      color: #93c5fd;
+      font-size: 12px;
+    }
+
+    .history-impact p,
+    .history-note {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .history-note {
+      color: #94a3b8;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -1410,7 +2014,7 @@
               <span id="gacha-badge" class="class-pill" style="background:#1e293b; color:#94a3b8;">BELUM ROLL</span>
             </div>
             <p id="gacha-desc" style="font-size:12px; color:#94a3b8; margin-top:6px;">
-              Kamu punya maksimal <strong>3 kali kesempatan</strong> untuk mengundi nasib keluarga (Prasejahtera, Kelas Menengah, atau Anak Sultan SCBD).
+              Maksimal <strong>3 kali kesempatan</strong>: peluang Sultan 5% per putaran; Prasejahtera dan Menengah masing-masing 47,5%, dengan 3 varian berbeda.
             </p>
             <div id="gacha-stats" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
 
@@ -1480,6 +2084,28 @@
         <button id="btn-replay" type="button" class="btn-start-life">
           🎰 Mulai Hidup Baru (Reset 3x Gacha)
         </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-history" class="modal-backdrop history-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="history-title">
+    <div class="modal-box history-box">
+      <div class="modal-hero history-hero">
+        <div class="history-kicker">📜 KONTEKS SEJARAH INDONESIA</div>
+        <h2 id="history-title"></h2>
+        <div id="history-period" class="history-period"></div>
+      </div>
+      <div class="modal-body">
+        <section class="history-impact">
+          <h3>📉 Dampak ekonomi</h3>
+          <p id="history-economy"></p>
+        </section>
+        <section class="history-impact">
+          <h3>🫂 Dampak sosial</h3>
+          <p id="history-social"></p>
+        </section>
+        <p class="history-note">Konteks diringkas dari materi yang diberikan; narasi dampak tidak mengubah statistik atau saldo karakter.</p>
+        <button id="btn-history-continue" type="button" class="btn-start-life">Lanjutkan cerita tahun ini →</button>
       </div>
     </div>
   </div>
@@ -1555,35 +2181,168 @@
     ];
 
     const GACHA_TIERS = {
-      PRASEJAHTERA: {
+      PRASEJAHTERA_1: {
         key: "PRASEJAHTERA",
-        title: "🔥 Keluarga Prasejahtera / Hardcore",
-        pill: "Keluarga Prasejahtera / Hardcore",
+        title: "🔥 Prasejahtera I • Buruh Harian",
+        pill: "Prasejahtera I • Buruh Harian",
         pillClass: "class-miskin",
-        desc: "Tabungan awal Rp 180.000. Uang saku pas-pasan, wajib bantu keluarga saat dewasa, namun mental ditempa paling tangguh.",
-        saldo: 180000,
-        health: 78, happy: 74, smart: 10, rel: 10, stress: 14,
-        infMult: 1.28
+        desc: "Modal sangat terbatas, tetapi daya tahan dan kebiasaan hidup sederhana cukup kuat.",
+        saldo: 120000,
+        health: 84, happy: 68, smart: 9, rel: 10, stress: 18,
+        infMult: 1.20
       },
-      MENENGAH: {
+      PRASEJAHTERA_2: {
+        key: "PRASEJAHTERA",
+        title: "🧺 Prasejahtera II • Keluarga Pedagang Kecil",
+        pill: "Prasejahtera II • Pedagang Kecil",
+        pillClass: "class-miskin",
+        desc: "Uang lebih cair dari usaha keluarga dan relasi lingkungan luas, tetapi pemasukan mudah naik-turun.",
+        saldo: 240000,
+        health: 76, happy: 78, smart: 12, rel: 17, stress: 13,
+        infMult: 1.32
+      },
+      PRASEJAHTERA_3: {
+        key: "PRASEJAHTERA",
+        title: "📚 Prasejahtera III • Anak Beasiswa",
+        pill: "Prasejahtera III • Anak Beasiswa",
+        pillClass: "class-miskin",
+        desc: "Tabungan tetap tipis, namun bekal belajar dan semangat berprestasi lebih tinggi.",
+        saldo: 90000,
+        health: 72, happy: 70, smart: 20, rel: 11, stress: 20,
+        infMult: 1.24
+      },
+      MENENGAH_1: {
         key: "MENENGAH",
-        title: "⚖️ Kelas Menengah Ngepas BPJS",
-        pill: "Kelas Menengah Ngepas BPJS",
+        title: "⚖️ Menengah I • Keluarga Karyawan",
+        pill: "Menengah I • Keluarga Karyawan",
         pillClass: "class-menengah",
-        desc: "Tabungan awal Rp 1.500.000. Masa sekolah cukup aman, tapi paling rentan terjepit inflasi, pajak, & kenaikan kos saat dewasa.",
-        saldo: 1500000,
-        health: 84, happy: 80, smart: 16, rel: 15, stress: 12,
-        infMult: 1.55
+        desc: "Tabungan dan kesehatan keluarga relatif terjaga, dengan tekanan akademik dan biaya rutin.",
+        saldo: 1800000,
+        health: 88, happy: 78, smart: 16, rel: 14, stress: 12,
+        infMult: 1.48
+      },
+      MENENGAH_2: {
+        key: "MENENGAH",
+        title: "🏪 Menengah II • Keluarga Wirausaha",
+        pill: "Menengah II • Wirausaha",
+        pillClass: "class-menengah",
+        desc: "Modal awal dan jaringan sosial lebih baik, tetapi arus uang keluarga lebih rentan gejolak.",
+        saldo: 2600000,
+        health: 80, happy: 84, smart: 15, rel: 22, stress: 14,
+        infMult: 1.62
+      },
+      MENENGAH_3: {
+        key: "MENENGAH",
+        title: "🎓 Menengah III • Keluarga Akademis",
+        pill: "Menengah III • Akademis",
+        pillClass: "class-menengah",
+        desc: "Dukungan pendidikan lebih kuat dan Pintar tinggi, namun target keluarga menambah stres.",
+        saldo: 1300000,
+        health: 82, happy: 73, smart: 24, rel: 16, stress: 17,
+        infMult: 1.52
       },
       SULTAN: {
         key: "SULTAN",
         title: "👑 Anak Sultan SCBD",
         pill: "Anak Sultan SCBD",
         pillClass: "class-kaya",
-        desc: "Tabungan awal Rp 150.000.000, akses les & koneksi orang dalam sejak dini, lebih kebal inflasi (tetap bisa bangkrut jika boros).",
+        desc: "Peluang hanya 5% tiap putaran. Modal besar, akses pendidikan dan koneksi kuat, tetapi tetap bisa bangkrut jika boros.",
         saldo: 150000000,
         health: 90, happy: 86, smart: 28, rel: 32, stress: 8,
         infMult: 0.72
+      }
+    };
+
+    const HISTORICAL_EVENTS = {
+      2005: {
+        period: "Oktober 2005",
+        title: "Bom Bali II & Lonjakan Harga BBM",
+        economy: "Serangan teror kembali menekan pemulihan pariwisata Bali. Kenaikan harga BBM di tengah mahalnya minyak dunia ikut mendorong inflasi dan mengurangi daya beli.",
+        social: "Rasa waswas di ruang publik meningkat, sementara keluarga berpenghasilan rendah menghadapi tekanan biaya hidup yang mendadak."
+      },
+      2006: {
+        period: "Mei 2006 dan seterusnya",
+        title: "Gempa Yogyakarta & Semburan Lumpur Sidoarjo",
+        economy: "Gempa merusak permukiman dan infrastruktur di DIY serta Jawa Tengah. Semburan lumpur di Sidoarjo menenggelamkan permukiman dan lahan, serta mengganggu kegiatan ekonomi setempat.",
+        social: "Penyintas menghadapi kehilangan tempat tinggal, trauma, dan ketidakpastian pemulihan serta ganti rugi yang berkepanjangan."
+      },
+      2008: {
+        period: "2008–2009",
+        title: "Krisis Finansial Global & Polemik Bank Century",
+        economy: "Krisis keuangan global menekan pasar dan nilai tukar, sementara perlambatan permintaan luar negeri memengaruhi ekspor Indonesia.",
+        social: "Kecemasan atas stabilitas keuangan dan polemik penyelamatan Bank Century memicu perdebatan serta menurunkan kepercayaan sebagian masyarakat."
+      },
+      2010: {
+        period: "Oktober–November 2010",
+        title: "Erupsi Besar Gunung Merapi",
+        economy: "Erupsi mengganggu pertanian, peternakan, pariwisata, dan transportasi udara di wilayah Yogyakarta serta Jawa Tengah.",
+        social: "Warga harus mengungsi dan beradaptasi dengan kehilangan, gangguan aktivitas, serta relokasi dari lingkungan tempat tinggal."
+      },
+      2014: {
+        period: "2014–2017",
+        title: "Kontestasi Politik & Polarisasi Sosial",
+        economy: "Ketegangan politik membuat sebagian pelaku usaha bersikap menunggu sebelum mengambil keputusan investasi atau ekspansi.",
+        social: "Perbedaan pilihan politik pada Pilpres 2014 dan Pilkada DKI 2016–2017 memicu perdebatan tajam, termasuk di media sosial dan lingkungan keluarga."
+      },
+      2015: {
+        period: "2015",
+        title: "Karhutla & Kabut Asap",
+        economy: "Kebakaran hutan dan lahan menimbulkan gangguan ekonomi serta aktivitas harian; pembukaan lahan perkebunan, termasuk sawit, menjadi bagian dari perdebatan publik.",
+        social: "Kabut asap mengganggu kesehatan dan kegiatan belajar, serta menambah tekanan bagi warga di wilayah terdampak."
+      },
+      2018: {
+        period: "2018",
+        title: "Gempa Lombok, Tsunami Palu & Selat Sunda",
+        economy: "Rangkaian bencana merusak permukiman, pusat perdagangan, dan infrastruktur, sekaligus mengganggu kegiatan pariwisata serta usaha lokal.",
+        social: "Kehilangan anggota keluarga dan kecemasan akan bencana susulan menjadi beban panjang bagi para penyintas."
+      },
+      2019: {
+        period: "2019",
+        title: "Karhutla, Kabut Asap & Sorotan Tata Kelola Sawit",
+        economy: "Karhutla kembali menimbulkan kerugian dan gangguan aktivitas ekonomi. Praktik pembukaan lahan serta dampaknya pada perdagangan sawit mendapat sorotan.",
+        social: "Paparan asap meningkatkan risiko gangguan pernapasan dan membatasi kegiatan warga, termasuk sekolah."
+      },
+      2020: {
+        period: "2020–2022",
+        title: "Pandemi COVID-19 & Pembatasan Mobilitas",
+        economy: "Pandemi dan pembatasan kegiatan memukul pariwisata, transportasi, UMKM, serta pekerjaan; ekonomi Indonesia mengalami kontraksi pada 2020.",
+        social: "Isolasi, kehilangan pekerjaan, duka, dan perubahan cara belajar maupun bekerja memberi tekanan besar pada banyak keluarga."
+      },
+      2021: {
+        period: "2021–2022",
+        title: "Kelangkaan Minyak Goreng & Gejolak Sawit",
+        economy: "Kenaikan harga CPO global diikuti kelangkaan minyak goreng di dalam negeri. Kebijakan dan tata niaga sawit berdampak berbeda pada konsumen, petani, dan pelaku usaha.",
+        social: "Antrean dan sulitnya memperoleh kebutuhan pokok memicu frustrasi serta menambah beban pengeluaran rumah tangga."
+      },
+      2022: {
+        period: "2022",
+        title: "Larangan Ekspor CPO, Kanjuruhan & Kasus Sambo",
+        economy: "Larangan sementara ekspor CPO ditujukan untuk menjaga pasokan dalam negeri, namun menekan harga TBS petani kecil dan memengaruhi penerimaan ekspor.",
+        social: "Tragedi Kanjuruhan menimbulkan duka dan trauma mendalam. Kasus Ferdy Sambo juga memicu kemarahan publik serta perdebatan tentang kepercayaan pada penegak hukum."
+      },
+      2023: {
+        period: "2023–2024",
+        title: "Pinjol Ilegal, Judi Online & Gelombang PHK",
+        economy: "Jeratan pinjaman ilegal dan judi online bertambah menjadi perhatian, bersamaan dengan PHK di sejumlah sektor seperti teknologi dan tekstil.",
+        social: "Utang dan kecanduan dapat memperburuk konflik keluarga serta tekanan psikologis; masyarakat juga menghadapi ketidakpastian pekerjaan."
+      },
+      2024: {
+        period: "Februari–Oktober 2024",
+        title: "Pemilu & Transisi Pemerintahan",
+        economy: "Pemilu dan pergantian pemerintahan membawa perubahan prioritas kebijakan; pelaku pasar mencermati arah anggaran dan program baru.",
+        social: "Kontestasi memunculkan perdebatan politik yang tajam, disusul harapan dan sikap menunggu masyarakat terhadap realisasi janji pemerintahan."
+      },
+      2025: {
+        period: "2025",
+        title: "Efisiensi Anggaran, MBG, Danantara & Isu Lingkungan",
+        economy: "Pemerintah menilai efisiensi, Danantara, MBG, dan hilirisasi dapat mendukung program prioritas. Sebagian ekonom dan pengamat menyoroti risiko menyempitnya ruang fiskal daerah serta pentingnya pengawasan.",
+        social: "Banjir di Sumatra dan pemulihan warga memunculkan perhatian pada risiko bencana. Hubungan antara tata kelola lahan, sawit, dan lingkungan menjadi perdebatan berbagai pihak."
+      },
+      2026: {
+        period: "2026 • ringkasan hingga November",
+        title: "Sorotan Tata Kelola Sawit & Program Prioritas",
+        economy: "Pengusutan dugaan penyimpangan pada program publik dan perkara ekspor turunan sawit menjadi sorotan. Tuntutan ganti rugi Rp81,8 triliun dalam perkara Duta Palma dipersoalkan pihak terdakwa; proses dan perhitungannya masih menjadi perhatian.",
+        social: "Perdebatan tentang efisiensi kerja, dampak AI, keamanan pangan, dan ekspansi sawit menambah kecemasan sekaligus diskusi publik. Berbagai pihak berbeda pandangan mengenai manfaat dan risikonya."
       }
     };
 
@@ -2078,6 +2837,13 @@
         }
       }
 
+      playSceneTransition() {
+        this.stage.classList.remove('age-transition');
+        void this.stage.offsetWidth;
+        this.stage.classList.add('age-transition');
+        window.setTimeout(() => this.stage.classList.remove('age-transition'), 750);
+      }
+
       update(dt, state, econ) {
         this.t += dt;
         for (const r of this.rain) {
@@ -2110,10 +2876,42 @@
 
         // 1. Latar Belakang per Fase Usia
         if (age <= 2) {
-          ctx.fillStyle = state.classKey === 'SULTAN' ? '#1e1b4b' : '#1e293b';
+          ctx.fillStyle = age === 2 ? '#334155' : (age === 0 ? '#3b263c' : '#27364f');
           ctx.fillRect(0, 0, w, h);
-          ctx.fillStyle = '#451a03';
+          ctx.fillStyle = age === 2 ? '#7c5b45' : '#553b4b';
           ctx.fillRect(0, h * 0.78, w, h * 0.22);
+          if (age <= 1) {
+            const cribX = w * 0.36;
+            const cribY = h * 0.53;
+            const cribW = w * 0.28;
+            const cribH = h * 0.27;
+            ctx.fillStyle = '#f1d4b5';
+            ctx.fillRect(cribX, cribY, cribW, cribH);
+            ctx.fillStyle = '#9a6249';
+            ctx.fillRect(cribX - 5, cribY + cribH - 5, cribW + 10, 7);
+            ctx.fillRect(cribX - 4, cribY - 5, cribW + 8, 6);
+            ctx.fillStyle = '#c99b79';
+            for (let rail = 0; rail < 6; rail++) {
+              ctx.fillRect(cribX + 5 + rail * (cribW - 14) / 5, cribY + 2, 3, cribH - 7);
+            }
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(age === 0 ? 'KAMAR BAYI' : 'BELAJAR BERDIRI', w * 0.78, h * 0.40);
+          } else {
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(w * 0.76, h * 0.63, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(w * 0.70, h * 0.72, 10, 10);
+            ctx.fillStyle = '#f472b6';
+            ctx.fillRect(w * 0.76, h * 0.72, 10, 10);
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('WAKTU BERMAIN', w * 0.78, h * 0.40);
+          }
           ctx.fillStyle = '#f8fafc';
           ctx.fillRect(w * 0.08, h * 0.14, 54, 44);
           ctx.fillStyle = '#dc2626';
@@ -2121,7 +2919,7 @@
           ctx.fillStyle = '#0f172a';
           ctx.font = '800 12px monospace';
           ctx.textAlign = 'center';
-          ctx.fillText('2005', w * 0.08 + 27, h * 0.14 + 33);
+          ctx.fillText(String(2005 + age), w * 0.08 + 27, h * 0.14 + 33);
         } else if (age <= 5) {
           ctx.fillStyle = '#0f2942';
           ctx.fillRect(0, 0, w, h);
@@ -2218,9 +3016,97 @@
         ctx.ellipse(0, 42, 28, 6.5, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        if (age <= 2) {
-          ctx.fillStyle = state.classKey === 'SULTAN' ? '#fbbf24' : '#38bdf8';
-          ctx.beginPath(); ctx.roundRect(-19, -6, 38, 42, 16); ctx.fill();
+        if (age === 0) {
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath();
+          ctx.ellipse(0, 12, 27, 21, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#38bdf8';
+          ctx.beginPath();
+          ctx.moveTo(-25, 4);
+          ctx.quadraticCurveTo(0, -4, 25, 4);
+          ctx.lineTo(17, 26);
+          ctx.quadraticCurveTo(0, 34, -17, 26);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#f5c29b';
+          ctx.beginPath();
+          ctx.arc(0, -18, 19, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(-7, -18, 1.8, 0, Math.PI * 2);
+          ctx.arc(7, -18, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#f472b6';
+          ctx.beginPath();
+          ctx.arc(0, -10, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(0, -19, 20, Math.PI, 0);
+          ctx.stroke();
+        } else if (age === 1) {
+          const wiggle = Math.sin(this.t * 4) * 1.5;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#f5c29b';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.moveTo(-13, 8); ctx.lineTo(-23, 16 + wiggle);
+          ctx.moveTo(13, 8); ctx.lineTo(23, 16 - wiggle);
+          ctx.moveTo(-9, 22); ctx.lineTo(-17, 31 - wiggle);
+          ctx.moveTo(9, 22); ctx.lineTo(17, 31 + wiggle);
+          ctx.stroke();
+          ctx.fillStyle = '#fb923c';
+          ctx.beginPath(); ctx.ellipse(0, 12, 18, 15, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath(); ctx.ellipse(0, 23, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#f5c29b';
+          ctx.beginPath(); ctx.arc(0, -14, 20, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(-7, -15, 2.2, 0, Math.PI * 2);
+          ctx.arc(7, -15, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#fda4af';
+          ctx.beginPath();
+          ctx.arc(-12, -8, 3, 0, Math.PI * 2);
+          ctx.arc(12, -8, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath(); ctx.arc(0, -34, 12, Math.PI, 0); ctx.fill();
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.arc(0, -10, 4, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+        } else if (age === 2) {
+          const step = Math.sin(this.t * 5) * 3;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#f5c29b';
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.moveTo(-12, 2); ctx.lineTo(-22, 14 - step);
+          ctx.moveTo(12, 2); ctx.lineTo(22, 14 + step);
+          ctx.stroke();
+          ctx.strokeStyle = '#334155';
+          ctx.lineWidth = 8;
+          ctx.beginPath();
+          ctx.moveTo(-7, 26); ctx.lineTo(-9, 38 + step);
+          ctx.moveTo(7, 26); ctx.lineTo(9, 38 - step);
+          ctx.stroke();
+          ctx.fillStyle = '#f97316';
+          ctx.beginPath(); ctx.roundRect(-14, -2, 28, 31, 10); ctx.fill();
+          ctx.fillStyle = '#f5c29b';
+          ctx.beginPath(); ctx.arc(0, -21, 18, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(-6, -22, 2.2, 0, Math.PI * 2);
+          ctx.arc(6, -22, 2.2, 0, Math.PI * 2);
+          ctx.arc(0, -40, 11, Math.PI, 0);
+          ctx.fill();
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.arc(0, -17, 4, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
         } else if (age <= 5) {
           ctx.fillStyle = age === 5 ? '#16a34a' : '#f97316';
           ctx.beginPath(); ctx.roundRect(-21, -7, 42, 44, 10); ctx.fill();
@@ -2237,46 +3123,48 @@
         }
 
         const headY = -29;
-        ctx.fillStyle = state.health < 35 ? '#cbd5b8' : '#f5c29b';
-        ctx.beginPath(); ctx.arc(0, headY, 21, 0, Math.PI * 2); ctx.fill();
+        if (age > 2) {
+          ctx.fillStyle = state.health < 35 ? '#cbd5b8' : '#f5c29b';
+          ctx.beginPath(); ctx.arc(0, headY, 21, 0, Math.PI * 2); ctx.fill();
 
-        ctx.fillStyle = age >= 60 ? '#cbd5e1' : '#0f172a';
-        ctx.beginPath(); ctx.arc(0, headY - 3, 22, Math.PI, 0); ctx.fill();
+          ctx.fillStyle = age >= 60 ? '#cbd5e1' : '#0f172a';
+          ctx.beginPath(); ctx.arc(0, headY - 3, 22, Math.PI, 0); ctx.fill();
 
-        if (age === 15 || age === 16) {
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillRect(-12, headY + 1, 24, 13);
-        }
-
-        if (isSultan && age >= 18) {
-          ctx.fillStyle = '#000000';
-          ctx.fillRect(-15, headY - 5, 13, 7);
-          ctx.fillRect(2, headY - 5, 13, 7);
-        } else {
-          ctx.fillStyle = '#0f172a';
-          ctx.beginPath();
-          ctx.arc(-8, headY - 2, 2.6, 0, Math.PI * 2);
-          ctx.arc(8, headY - 2, 2.6, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        if (age !== 15 && age !== 16) {
-          ctx.strokeStyle = '#0f172a';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          if (state.stress >= 65 || state.health < 35) {
-            ctx.moveTo(-6, headY + 10);
-            ctx.quadraticCurveTo(0, headY + 5, 6, headY + 10);
-          } else {
-            ctx.arc(0, headY + 6, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+          if (age === 15 || age === 16) {
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(-12, headY + 1, 24, 13);
           }
-          ctx.stroke();
-        }
 
-        if (state.stress >= 65) {
-          ctx.font = '14px sans-serif';
-          ctx.fillText('⚡', -32, headY - 12);
-          ctx.fillText('⚡', 18, headY - 14);
+          if (isSultan && age >= 18) {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(-15, headY - 5, 13, 7);
+            ctx.fillRect(2, headY - 5, 13, 7);
+          } else {
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.arc(-8, headY - 2, 2.6, 0, Math.PI * 2);
+            ctx.arc(8, headY - 2, 2.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          if (age !== 15 && age !== 16) {
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (state.stress >= 65 || state.health < 35) {
+              ctx.moveTo(-6, headY + 10);
+              ctx.quadraticCurveTo(0, headY + 5, 6, headY + 10);
+            } else {
+              ctx.arc(0, headY + 6, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+            }
+            ctx.stroke();
+          }
+
+          if (state.stress >= 65) {
+            ctx.font = '14px sans-serif';
+            ctx.fillText('⚡', -32, headY - 12);
+            ctx.fillText('⚡', 18, headY - 14);
+          }
         }
 
         ctx.restore();
@@ -2287,6 +3175,13 @@
           if (p.type === 'MONEY') {
             ctx.fillStyle = '#f43f5e';
             ctx.fillRect(p.x - 8, p.y - 4, 16, 8);
+          } else if (p.type === 'ALERT') {
+            ctx.fillStyle = '#fb7185';
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fff1f2';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('!', p.x, p.y - 7);
           } else {
             ctx.fillStyle = '#38bdf8';
             ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2); ctx.fill();
@@ -2313,10 +3208,12 @@
         this.activeActTab = 'upgrade';
         this.activeMobTab = 'story';
         this.choiceResolved = false;
+        this.choicePending = false;
 
         this.state = null;
         this.econ = ECONOMY_BY_YEAR[2005];
         this.usedPoolIds = new Set();
+        this.seenHistoricalEventYears = new Set();
 
         this.bindEvents();
         this.initSpawnModal();
@@ -2353,6 +3250,19 @@
 
         document.getElementById('btn-next-year').addEventListener('click', () => {
           this.nextYear();
+        });
+
+        const historyModal = document.getElementById('modal-history');
+        document.getElementById('btn-history-continue').addEventListener('click', () => {
+          this.closeHistoricalEvent();
+        });
+        historyModal.addEventListener('click', event => {
+          if (event.target === historyModal) this.closeHistoricalEvent();
+        });
+        window.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && !historyModal.classList.contains('hidden')) {
+            this.closeHistoricalEvent();
+          }
         });
 
         document.getElementById('btn-replay').addEventListener('click', () => {
@@ -2423,6 +3333,7 @@
         this.lockedTier = null;
         this.isSpinning = false;
         this.choiceResolved = false;
+        this.choicePending = false;
 
         document.getElementById('gacha-counter').textContent = 'Kesempatan Gacha: 3 / 3';
         document.getElementById('gacha-counter').style.color = '#fbbf24';
@@ -2432,7 +3343,7 @@
         document.getElementById('gacha-badge').style.background = '#1e293b';
         document.getElementById('gacha-badge').style.color = '#94a3b8';
         document.getElementById('gacha-desc').innerHTML =
-          'Kamu punya maksimal <strong>3 kali kesempatan</strong> untuk mengundi nasib keluarga (Prasejahtera, Kelas Menengah, atau Anak Sultan SCBD).';
+          'Maksimal <strong>3 kali kesempatan</strong>: peluang Sultan <strong>5% per putaran</strong>; Prasejahtera dan Menengah masing-masing 47,5%, dengan 3 varian berbeda.';
         document.getElementById('gacha-stats').innerHTML = '';
 
         const gBtn = document.getElementById('btn-gacha');
@@ -2461,12 +3372,17 @@
         document.getElementById('gacha-counter').textContent = `Kesempatan Gacha: ${this.gachaLeft} / 3`;
 
         const r = Math.random();
-        const pickKey = r < 0.42 ? 'PRASEJAHTERA' : (r < 0.85 ? 'MENENGAH' : 'SULTAN');
-        const keys = ['PRASEJAHTERA', 'MENENGAH', 'SULTAN'];
+        const variantKeys = r < 0.475
+          ? ['PRASEJAHTERA_1', 'PRASEJAHTERA_2', 'PRASEJAHTERA_3']
+          : (r < 0.95
+            ? ['MENENGAH_1', 'MENENGAH_2', 'MENENGAH_3']
+            : ['SULTAN']);
+        const pickKey = variantKeys[Math.floor(Math.random() * variantKeys.length)];
+        const keys = Object.keys(GACHA_TIERS);
 
         let step = 0;
         const timer = setInterval(() => {
-          this.previewGachaTier(GACHA_TIERS[keys[step % 3]]);
+          this.previewGachaTier(GACHA_TIERS[keys[step % keys.length]]);
           this.sfx.tone(420 + (step % 3) * 110, 0.05, 'triangle', 0.06);
           step++;
 
@@ -2510,6 +3426,8 @@
           <span class="fx-badge fx-pos">😊 ${tier.happy}%</span>
           <span class="fx-badge" style="background:rgba(56,189,248,0.18);color:#7dd3fc;">🧠 ${tier.smart} Pintar</span>
           <span class="fx-badge" style="background:rgba(245,158,11,0.18);color:#fcd34d;">🤝 ${tier.rel} Relasi</span>
+          <span class="fx-badge" style="background:rgba(239,68,68,0.18);color:#fca5a5;">⚡ ${tier.stress}% Stres</span>
+          <span class="fx-badge" style="background:rgba(148,163,184,0.18);color:#cbd5e1;">📈 Inflasi ${tier.infMult.toFixed(2)}x</span>
         `;
       }
 
@@ -2524,6 +3442,7 @@
         const tier = this.lockedTier;
 
         this.usedPoolIds.clear();
+        this.seenHistoricalEventYears.clear();
         document.body.classList.remove('hard-mode');
         document.getElementById('unlock-banner').classList.add('hidden');
 
@@ -2557,6 +3476,7 @@
         this.econ = ECONOMY_BY_YEAR[2005];
         this.activeActTab = 'upgrade';
         this.choiceResolved = false;
+        this.choicePending = false;
 
         document.getElementById('modal-spawn').classList.add('hidden');
         document.getElementById('journal-list').innerHTML = '';
@@ -2566,6 +3486,7 @@
         this.switchMobileTab('story');
         this.loadUniqueScenario(0);
         this.updateAllUI();
+        this.showHistoricalEvent(2005);
       }
 
       getEconomyForYear(year) {
@@ -2582,6 +3503,26 @@
         document.getElementById('unlock-banner-icon').textContent = icon;
         document.getElementById('unlock-banner-text').innerHTML = htmlMsg;
         box.classList.remove('hidden');
+      }
+
+      showHistoricalEvent(year) {
+        const event = HISTORICAL_EVENTS[year];
+        if (!event || !this.state || this.seenHistoricalEventYears.has(year)) return;
+
+        this.seenHistoricalEventYears.add(year);
+        document.getElementById('history-title').textContent = event.title;
+        document.getElementById('history-period').textContent = event.period;
+        document.getElementById('history-economy').textContent = event.economy;
+        document.getElementById('history-social').textContent = event.social;
+        document.getElementById('modal-history').classList.remove('hidden');
+        document.getElementById('btn-history-continue').focus({ preventScroll: true });
+      }
+
+      closeHistoricalEvent() {
+        document.getElementById('modal-history').classList.add('hidden');
+        this.sfx.click();
+        const firstChoice = document.querySelector('#dilemma-choices .choice-btn');
+        (firstChoice || document.getElementById('btn-next-year')).focus({ preventScroll: true });
       }
 
       nextYear() {
@@ -2699,6 +3640,7 @@
 
         this.loadUniqueScenario(age);
         this.updateAllUI();
+        this.showHistoricalEvent(year);
       }
 
       loadUniqueScenario(age) {
@@ -2717,6 +3659,8 @@
         }
 
         this.choiceResolved = false;
+        this.choicePending = false;
+        this.canvas.playSceneTransition();
         const nextBtn = document.getElementById('btn-next-year');
         nextBtn.disabled = true;
         nextBtn.title = "Pilih satu keputusan cerita terlebih dahulu";
@@ -2728,6 +3672,7 @@
 
         document.getElementById('dilemma-result').classList.add('hidden');
         const list = document.getElementById('dilemma-choices');
+        list.classList.remove('is-resolving');
         list.innerHTML = '';
 
         scenario.choices.forEach((ch, idx) => {
@@ -2756,56 +3701,72 @@
 
           btn.addEventListener('click', () => {
             if (locked) return;
-            this.applyChoice(scenario, ch);
+            this.applyChoice(scenario, ch, btn);
           });
 
           list.appendChild(btn);
         });
       }
 
-      applyChoice(scenario, ch) {
-        if (!this.state || this.state.ended) return;
-        const fx = ch.fx || {};
-        if (fx.saldo) this.state.saldo += fx.saldo;
-        if (fx.health) this.state.health = this.clamp(this.state.health + fx.health);
-        if (fx.happy) this.state.happy = this.clamp(this.state.happy + fx.happy);
-        if (fx.smart) this.state.smart = this.clamp(this.state.smart + fx.smart, 0, 100);
-        if (fx.rel) this.state.rel = this.clamp(this.state.rel + fx.rel, 0, 100);
-        if (fx.stress) this.state.stress = this.clamp(this.state.stress + fx.stress);
+      applyChoice(scenario, ch, selectedBtn) {
+        if (!this.state || this.state.ended || this.choicePending || this.choiceResolved) return;
+        this.choicePending = true;
+        const choiceList = document.getElementById('dilemma-choices');
+        choiceList.classList.add('is-resolving');
+        choiceList.querySelectorAll('button').forEach(button => {
+          if (button !== selectedBtn) button.disabled = true;
+        });
+        selectedBtn.classList.add('picked');
 
-        this.choiceResolved = true;
-        const nextBtn = document.getElementById('btn-next-year');
-        nextBtn.disabled = false;
-        nextBtn.title = "";
+        window.setTimeout(() => {
+          if (!this.state || this.state.ended) {
+            this.choicePending = false;
+            return;
+          }
+          const fx = ch.fx || {};
+          if (fx.saldo) this.state.saldo += fx.saldo;
+          if (fx.health) this.state.health = this.clamp(this.state.health + fx.health);
+          if (fx.happy) this.state.happy = this.clamp(this.state.happy + fx.happy);
+          if (fx.smart) this.state.smart = this.clamp(this.state.smart + fx.smart, 0, 100);
+          if (fx.rel) this.state.rel = this.clamp(this.state.rel + fx.rel, 0, 100);
+          if (fx.stress) this.state.stress = this.clamp(this.state.stress + fx.stress);
 
-        if (fx.saldo && fx.saldo > 0) {
-          this.sfx.coin();
-          this.canvas.spawnFx('MONEY', 12);
-        } else if ((fx.stress && fx.stress >= 10) || (fx.saldo && fx.saldo <= -2000000)) {
-          this.sfx.alert();
-        } else {
-          this.sfx.click();
-          this.canvas.spawnFx('SPARK', 10);
-        }
+          this.choiceResolved = true;
+          this.choicePending = false;
+          const nextBtn = document.getElementById('btn-next-year');
+          nextBtn.disabled = false;
+          nextBtn.title = "";
 
-        document.getElementById('dilemma-choices').innerHTML = '';
-        const resBox = document.getElementById('dilemma-result');
-        resBox.classList.remove('hidden');
-        document.getElementById('result-emoji').textContent = ch.emoji || '✨';
-        document.getElementById('result-text').textContent = ch.result;
+          if (fx.saldo && fx.saldo > 0) {
+            this.sfx.coin();
+            this.canvas.spawnFx('MONEY', 12);
+          } else if ((fx.stress && fx.stress > 0) || (fx.health && fx.health < 0) || (fx.saldo && fx.saldo < 0)) {
+            this.sfx.alert();
+            this.canvas.spawnFx('ALERT', 10);
+          } else {
+            this.sfx.click();
+            this.canvas.spawnFx('SPARK', 10);
+          }
 
-        const tags = [];
-        if (fx.saldo) tags.push(`<span class="fx-badge ${fx.saldo > 0 ? 'fx-pos' : 'fx-neg'}">${fx.saldo > 0 ? '+' : ''}${formatRp(fx.saldo)}</span>`);
-        if (fx.health) tags.push(`<span class="fx-badge ${fx.health > 0 ? 'fx-pos' : 'fx-neg'}">${fx.health > 0 ? '+' : ''}${fx.health}% Kesehatan</span>`);
-        if (fx.happy) tags.push(`<span class="fx-badge ${fx.happy > 0 ? 'fx-pos' : 'fx-neg'}">${fx.happy > 0 ? '+' : ''}${fx.happy}% Bahagia</span>`);
-        if (fx.smart) tags.push(`<span class="fx-badge fx-pos">+${fx.smart} Pintar</span>`);
-        if (fx.rel) tags.push(`<span class="fx-badge fx-pos">+${fx.rel} Relasi</span>`);
-        if (fx.stress) tags.push(`<span class="fx-badge ${fx.stress < 0 ? 'fx-pos' : 'fx-neg'}">${fx.stress > 0 ? '+' : ''}${fx.stress}% Stres</span>`);
-        document.getElementById('result-badges').innerHTML = tags.join('');
+          document.getElementById('dilemma-choices').innerHTML = '';
+          const resBox = document.getElementById('dilemma-result');
+          resBox.classList.remove('hidden');
+          document.getElementById('result-emoji').textContent = ch.emoji || '✨';
+          document.getElementById('result-text').textContent = ch.result;
 
-        this.addJournal(this.state.year, this.state.age, `<strong>${scenario.title}:</strong> "${ch.label}". ${ch.result}`);
-        this.checkEndGame();
-        this.updateAllUI();
+          const tags = [];
+          if (fx.saldo) tags.push(`<span class="fx-badge ${fx.saldo > 0 ? 'fx-pos' : 'fx-neg'}">${fx.saldo > 0 ? '+' : ''}${formatRp(fx.saldo)}</span>`);
+          if (fx.health) tags.push(`<span class="fx-badge ${fx.health > 0 ? 'fx-pos' : 'fx-neg'}">${fx.health > 0 ? '+' : ''}${fx.health}% Kesehatan</span>`);
+          if (fx.happy) tags.push(`<span class="fx-badge ${fx.happy > 0 ? 'fx-pos' : 'fx-neg'}">${fx.happy > 0 ? '+' : ''}${fx.happy}% Bahagia</span>`);
+          if (fx.smart) tags.push(`<span class="fx-badge fx-pos">+${fx.smart} Pintar</span>`);
+          if (fx.rel) tags.push(`<span class="fx-badge fx-pos">+${fx.rel} Relasi</span>`);
+          if (fx.stress) tags.push(`<span class="fx-badge ${fx.stress < 0 ? 'fx-pos' : 'fx-neg'}">${fx.stress > 0 ? '+' : ''}${fx.stress}% Stres</span>`);
+          document.getElementById('result-badges').innerHTML = tags.join('');
+
+          this.addJournal(this.state.year, this.state.age, `<strong>${scenario.title}:</strong> "${ch.label}". ${ch.result}`);
+          this.checkEndGame();
+          this.updateAllUI();
+        }, 360);
       }
 
       /* -----------------------------------------------------------------------
@@ -3231,7 +4192,9 @@
       }
 
       getPhaseName(age) {
-        if (age <= 2) return "Bayi & Balita 2005";
+        if (age === 0) return "Bayi Baru Lahir";
+        if (age === 1) return "Bayi Belajar Berjalan";
+        if (age === 2) return "Balita Awal";
         if (age <= 5) return age === 5 ? "TK B (Wisuda Mini)" : "PAUD / TK A";
         if (age <= 11) return `Pelajar SD Kelas ${age - 5}`;
         if (age <= 14) return `Pelajar SMP Kelas ${age - 11}`;
@@ -3277,7 +4240,7 @@
 
         document.getElementById('canvas-mood-pill').textContent = isAdult
           ? (e.type === 'gawat' ? "🚨 INDONESIA GAWAT" : (s.stress >= 65 ? "⚡ Stres Tinggi" : "💼 Bertahan Hidup (18+)"))
-          : `🎒 ${this.getPhaseName(s.age)}`;
+          : (s.age === 0 ? "👶 BAYI BARU LAHIR" : (s.age === 1 ? "🍼 BAYI BELAJAR BERJALAN" : (s.age === 2 ? "🚼 BALITA AWAL" : `🎒 ${this.getPhaseName(s.age)}`)));
 
         document.getElementById('canvas-cost-pill').textContent = isAdult
           ? `Biaya/Thn: ${formatRp(s.lastLivingCost)}`
