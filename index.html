@@ -1725,6 +1725,92 @@
       color: #94a3b8;
       font-size: 11px;
     }
+
+    .history-effects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .stat-item,
+    .saldo-box {
+      position: relative;
+    }
+
+    .stat-item.stat-gain,
+    .saldo-box.stat-gain {
+      animation: statGain 0.85s ease;
+    }
+
+    .stat-item.stat-loss,
+    .saldo-box.stat-loss {
+      animation: statLoss 0.85s ease;
+    }
+
+    .stat-change-pop {
+      position: absolute;
+      z-index: 2;
+      top: -8px;
+      right: 5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font: 800 10px var(--font-mono);
+      pointer-events: none;
+      animation: statChangeFloat 1.1s ease forwards;
+    }
+
+    .saldo-box .stat-change-pop {
+      left: 50%;
+      right: auto;
+    }
+
+    .stat-change-pop.gain {
+      color: #a7f3d0;
+      background: rgba(5, 150, 105, 0.92);
+    }
+
+    .stat-change-pop.loss {
+      color: #fecaca;
+      background: rgba(185, 28, 28, 0.92);
+    }
+
+    .stat-value-pop {
+      display: inline-block;
+      animation: statValuePop 0.55s ease;
+    }
+
+    @keyframes statGain {
+      35% { border-color: rgba(52, 211, 153, 0.9); box-shadow: 0 0 18px rgba(16, 185, 129, 0.35); }
+    }
+
+    @keyframes statLoss {
+      35% { border-color: rgba(248, 113, 113, 0.9); box-shadow: 0 0 18px rgba(239, 68, 68, 0.32); }
+    }
+
+    @keyframes statChangeFloat {
+      0% { opacity: 0; transform: translateY(6px) scale(0.88); }
+      18%, 72% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-8px) scale(0.96); }
+    }
+
+    @keyframes statValuePop {
+      45% { transform: scale(1.2); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stat-item.stat-gain,
+      .saldo-box.stat-gain,
+      .stat-item.stat-loss,
+      .saldo-box.stat-loss,
+      .stat-change-pop,
+      .stat-value-pop {
+        animation-duration: 0.01ms;
+      }
+
+      .bar-fill {
+        transition-duration: 0.01ms;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2104,7 +2190,11 @@
           <h3>🫂 Dampak sosial</h3>
           <p id="history-social"></p>
         </section>
-        <p class="history-note">Konteks diringkas dari materi yang diberikan; narasi dampak tidak mengubah statistik atau saldo karakter.</p>
+        <section class="history-impact">
+          <h3>📊 Dampak ke perjalananmu</h3>
+          <div id="history-effects" class="history-effects" aria-live="polite"></div>
+        </section>
+        <p class="history-note">Efek statistik adalah simulasi dampak umum, bukan penilaian dampak yang sama bagi setiap orang.</p>
         <button id="btn-history-continue" type="button" class="btn-start-life">Lanjutkan cerita tahun ini →</button>
       </div>
     </div>
@@ -2156,6 +2246,18 @@
       click() { this.tone(540, 0.06, 'triangle', 0.07); }
       coin() { this.tone(987, 0.12, 'sine', 0.1, 0); this.tone(1318, 0.18, 'sine', 0.1, 0.07); }
       alert() { this.tone(360, 0.16, 'sawtooth', 0.08, 0); this.tone(260, 0.2, 'sawtooth', 0.08, 0.18); }
+      statChange(mood) {
+        if (mood === 'gain') {
+          this.tone(740, 0.1, 'sine', 0.07);
+          this.tone(988, 0.14, 'sine', 0.07, 0.08);
+        } else if (mood === 'loss') {
+          this.tone(330, 0.12, 'triangle', 0.07);
+          this.tone(247, 0.16, 'triangle', 0.07, 0.09);
+        } else {
+          this.tone(523, 0.11, 'sine', 0.06);
+          this.tone(392, 0.14, 'triangle', 0.06, 0.09);
+        }
+      }
       unlock() { [523, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.18, 'triangle', 0.09, i * 0.07)); }
     }
 
@@ -2258,91 +2360,106 @@
         period: "Oktober 2005",
         title: "Bom Bali II & Lonjakan Harga BBM",
         economy: "Serangan teror kembali menekan pemulihan pariwisata Bali. Kenaikan harga BBM di tengah mahalnya minyak dunia ikut mendorong inflasi dan mengurangi daya beli.",
-        social: "Rasa waswas di ruang publik meningkat, sementara keluarga berpenghasilan rendah menghadapi tekanan biaya hidup yang mendadak."
+        social: "Rasa waswas di ruang publik meningkat, sementara keluarga berpenghasilan rendah menghadapi tekanan biaya hidup yang mendadak.",
+        effects: { saldo: -20000, happy: -1, stress: 1 }
       },
       2006: {
         period: "Mei 2006 dan seterusnya",
         title: "Gempa Yogyakarta & Semburan Lumpur Sidoarjo",
         economy: "Gempa merusak permukiman dan infrastruktur di DIY serta Jawa Tengah. Semburan lumpur di Sidoarjo menenggelamkan permukiman dan lahan, serta mengganggu kegiatan ekonomi setempat.",
-        social: "Penyintas menghadapi kehilangan tempat tinggal, trauma, dan ketidakpastian pemulihan serta ganti rugi yang berkepanjangan."
+        social: "Penyintas menghadapi kehilangan tempat tinggal, trauma, dan ketidakpastian pemulihan serta ganti rugi yang berkepanjangan.",
+        effects: { saldo: -35000, health: -1, happy: -2, stress: 2 }
       },
       2008: {
         period: "2008–2009",
         title: "Krisis Finansial Global & Polemik Bank Century",
         economy: "Krisis keuangan global menekan pasar dan nilai tukar, sementara perlambatan permintaan luar negeri memengaruhi ekspor Indonesia.",
-        social: "Kecemasan atas stabilitas keuangan dan polemik penyelamatan Bank Century memicu perdebatan serta menurunkan kepercayaan sebagian masyarakat."
+        social: "Kecemasan atas stabilitas keuangan dan polemik penyelamatan Bank Century memicu perdebatan serta menurunkan kepercayaan sebagian masyarakat.",
+        effects: { saldo: -50000, happy: -2, stress: 3 }
       },
       2010: {
         period: "Oktober–November 2010",
         title: "Erupsi Besar Gunung Merapi",
         economy: "Erupsi mengganggu pertanian, peternakan, pariwisata, dan transportasi udara di wilayah Yogyakarta serta Jawa Tengah.",
-        social: "Warga harus mengungsi dan beradaptasi dengan kehilangan, gangguan aktivitas, serta relokasi dari lingkungan tempat tinggal."
+        social: "Warga harus mengungsi dan beradaptasi dengan kehilangan, gangguan aktivitas, serta relokasi dari lingkungan tempat tinggal.",
+        effects: { saldo: -30000, health: -2, happy: -2, stress: 3 }
       },
       2014: {
         period: "2014–2017",
         title: "Kontestasi Politik & Polarisasi Sosial",
         economy: "Ketegangan politik membuat sebagian pelaku usaha bersikap menunggu sebelum mengambil keputusan investasi atau ekspansi.",
-        social: "Perbedaan pilihan politik pada Pilpres 2014 dan Pilkada DKI 2016–2017 memicu perdebatan tajam, termasuk di media sosial dan lingkungan keluarga."
+        social: "Perbedaan pilihan politik pada Pilpres 2014 dan Pilkada DKI 2016–2017 memicu perdebatan tajam, termasuk di media sosial dan lingkungan keluarga.",
+        effects: { happy: -1, rel: -1, stress: 2 }
       },
       2015: {
         period: "2015",
         title: "Karhutla & Kabut Asap",
         economy: "Kebakaran hutan dan lahan menimbulkan gangguan ekonomi serta aktivitas harian; pembukaan lahan perkebunan, termasuk sawit, menjadi bagian dari perdebatan publik.",
-        social: "Kabut asap mengganggu kesehatan dan kegiatan belajar, serta menambah tekanan bagi warga di wilayah terdampak."
+        social: "Kabut asap mengganggu kesehatan dan kegiatan belajar, serta menambah tekanan bagi warga di wilayah terdampak.",
+        effects: { saldo: -30000, health: -2, happy: -2, stress: 3 }
       },
       2018: {
         period: "2018",
         title: "Gempa Lombok, Tsunami Palu & Selat Sunda",
         economy: "Rangkaian bencana merusak permukiman, pusat perdagangan, dan infrastruktur, sekaligus mengganggu kegiatan pariwisata serta usaha lokal.",
-        social: "Kehilangan anggota keluarga dan kecemasan akan bencana susulan menjadi beban panjang bagi para penyintas."
+        social: "Kehilangan anggota keluarga dan kecemasan akan bencana susulan menjadi beban panjang bagi para penyintas.",
+        effects: { saldo: -30000, health: -1, happy: -3, stress: 4 }
       },
       2019: {
         period: "2019",
         title: "Karhutla, Kabut Asap & Sorotan Tata Kelola Sawit",
         economy: "Karhutla kembali menimbulkan kerugian dan gangguan aktivitas ekonomi. Praktik pembukaan lahan serta dampaknya pada perdagangan sawit mendapat sorotan.",
-        social: "Paparan asap meningkatkan risiko gangguan pernapasan dan membatasi kegiatan warga, termasuk sekolah."
+        social: "Paparan asap meningkatkan risiko gangguan pernapasan dan membatasi kegiatan warga, termasuk sekolah.",
+        effects: { saldo: -30000, health: -2, happy: -2, stress: 3 }
       },
       2020: {
         period: "2020–2022",
         title: "Pandemi COVID-19 & Pembatasan Mobilitas",
         economy: "Pandemi dan pembatasan kegiatan memukul pariwisata, transportasi, UMKM, serta pekerjaan; ekonomi Indonesia mengalami kontraksi pada 2020.",
-        social: "Isolasi, kehilangan pekerjaan, duka, dan perubahan cara belajar maupun bekerja memberi tekanan besar pada banyak keluarga."
+        social: "Isolasi, kehilangan pekerjaan, duka, dan perubahan cara belajar maupun bekerja memberi tekanan besar pada banyak keluarga.",
+        effects: { saldo: -80000, health: -3, happy: -4, stress: 6 }
       },
       2021: {
         period: "2021–2022",
         title: "Kelangkaan Minyak Goreng & Gejolak Sawit",
         economy: "Kenaikan harga CPO global diikuti kelangkaan minyak goreng di dalam negeri. Kebijakan dan tata niaga sawit berdampak berbeda pada konsumen, petani, dan pelaku usaha.",
-        social: "Antrean dan sulitnya memperoleh kebutuhan pokok memicu frustrasi serta menambah beban pengeluaran rumah tangga."
+        social: "Antrean dan sulitnya memperoleh kebutuhan pokok memicu frustrasi serta menambah beban pengeluaran rumah tangga.",
+        effects: { saldo: -40000, happy: -2, stress: 3 }
       },
       2022: {
         period: "2022",
         title: "Larangan Ekspor CPO, Kanjuruhan & Kasus Sambo",
         economy: "Larangan sementara ekspor CPO ditujukan untuk menjaga pasokan dalam negeri, namun menekan harga TBS petani kecil dan memengaruhi penerimaan ekspor.",
-        social: "Tragedi Kanjuruhan menimbulkan duka dan trauma mendalam. Kasus Ferdy Sambo juga memicu kemarahan publik serta perdebatan tentang kepercayaan pada penegak hukum."
+        social: "Tragedi Kanjuruhan menimbulkan duka dan trauma mendalam. Kasus Ferdy Sambo juga memicu kemarahan publik serta perdebatan tentang kepercayaan pada penegak hukum.",
+        effects: { saldo: -50000, happy: -3, rel: -1, stress: 4 }
       },
       2023: {
         period: "2023–2024",
         title: "Pinjol Ilegal, Judi Online & Gelombang PHK",
         economy: "Jeratan pinjaman ilegal dan judi online bertambah menjadi perhatian, bersamaan dengan PHK di sejumlah sektor seperti teknologi dan tekstil.",
-        social: "Utang dan kecanduan dapat memperburuk konflik keluarga serta tekanan psikologis; masyarakat juga menghadapi ketidakpastian pekerjaan."
+        social: "Utang dan kecanduan dapat memperburuk konflik keluarga serta tekanan psikologis; masyarakat juga menghadapi ketidakpastian pekerjaan.",
+        effects: { saldo: -60000, happy: -3, rel: -1, stress: 5 }
       },
       2024: {
         period: "Februari–Oktober 2024",
         title: "Pemilu & Transisi Pemerintahan",
         economy: "Pemilu dan pergantian pemerintahan membawa perubahan prioritas kebijakan; pelaku pasar mencermati arah anggaran dan program baru.",
-        social: "Kontestasi memunculkan perdebatan politik yang tajam, disusul harapan dan sikap menunggu masyarakat terhadap realisasi janji pemerintahan."
+        social: "Kontestasi memunculkan perdebatan politik yang tajam, disusul harapan dan sikap menunggu masyarakat terhadap realisasi janji pemerintahan.",
+        effects: { saldo: 25000, happy: 2, rel: 1, stress: -1 }
       },
       2025: {
         period: "2025",
         title: "Efisiensi Anggaran, MBG, Danantara & Isu Lingkungan",
         economy: "Pemerintah menilai efisiensi, Danantara, MBG, dan hilirisasi dapat mendukung program prioritas. Sebagian ekonom dan pengamat menyoroti risiko menyempitnya ruang fiskal daerah serta pentingnya pengawasan.",
-        social: "Banjir di Sumatra dan pemulihan warga memunculkan perhatian pada risiko bencana. Hubungan antara tata kelola lahan, sawit, dan lingkungan menjadi perdebatan berbagai pihak."
+        social: "Banjir di Sumatra dan pemulihan warga memunculkan perhatian pada risiko bencana. Hubungan antara tata kelola lahan, sawit, dan lingkungan menjadi perdebatan berbagai pihak.",
+        effects: { saldo: -40000, health: -1, happy: 1, stress: 2 }
       },
       2026: {
         period: "2026 • ringkasan hingga November",
         title: "Sorotan Tata Kelola Sawit & Program Prioritas",
         economy: "Pengusutan dugaan penyimpangan pada program publik dan perkara ekspor turunan sawit menjadi sorotan. Tuntutan ganti rugi Rp81,8 triliun dalam perkara Duta Palma dipersoalkan pihak terdakwa; proses dan perhitungannya masih menjadi perhatian.",
-        social: "Perdebatan tentang efisiensi kerja, dampak AI, keamanan pangan, dan ekspansi sawit menambah kecemasan sekaligus diskusi publik. Berbagai pihak berbeda pandangan mengenai manfaat dan risikonya."
+        social: "Perdebatan tentang efisiensi kerja, dampak AI, keamanan pangan, dan ekspansi sawit menambah kecemasan sekaligus diskusi publik. Berbagai pihak berbeda pandangan mengenai manfaat dan risikonya.",
+        effects: { saldo: -50000, happy: -1, rel: -1, stress: 3 }
       }
     };
 
@@ -3214,6 +3331,8 @@
         this.econ = ECONOMY_BY_YEAR[2005];
         this.usedPoolIds = new Set();
         this.seenHistoricalEventYears = new Set();
+        this.lastRenderedStats = null;
+        this.statAnimationId = 0;
 
         this.bindEvents();
         this.initSpawnModal();
@@ -3244,7 +3363,6 @@
 
         document.getElementById('btn-start-life').addEventListener('click', () => {
           if (this.isSpinning || !this.lockedTier) return;
-          this.sfx.coin();
           this.startNewGame();
         });
 
@@ -3443,6 +3561,7 @@
 
         this.usedPoolIds.clear();
         this.seenHistoricalEventYears.clear();
+        this.lastRenderedStats = null;
         document.body.classList.remove('hard-mode');
         document.getElementById('unlock-banner').classList.add('hidden');
 
@@ -3510,12 +3629,52 @@
         if (!event || !this.state || this.seenHistoricalEventYears.has(year)) return;
 
         this.seenHistoricalEventYears.add(year);
+        const appliedEffects = this.applyHistoricalEffects(event.effects);
+        this.updateAllUI();
         document.getElementById('history-title').textContent = event.title;
         document.getElementById('history-period').textContent = event.period;
         document.getElementById('history-economy').textContent = event.economy;
         document.getElementById('history-social').textContent = event.social;
+        const effectLabels = {
+          saldo: { icon: '💰', label: 'Saldo', beneficialWhenPositive: true, isMoney: true },
+          health: { icon: '❤️', label: 'Kesehatan', beneficialWhenPositive: true, isPercent: true },
+          happy: { icon: '😊', label: 'Bahagia', beneficialWhenPositive: true, isPercent: true },
+          smart: { icon: '🧠', label: 'Pintar', beneficialWhenPositive: true },
+          rel: { icon: '🤝', label: 'Relasi', beneficialWhenPositive: true },
+          stress: { icon: '⚡', label: 'Stres', beneficialWhenPositive: false, isPercent: true }
+        };
+        const effectsBox = document.getElementById('history-effects');
+        effectsBox.replaceChildren();
+        appliedEffects.forEach(({ stat, delta }) => {
+          const definition = effectLabels[stat];
+          const beneficial = definition.beneficialWhenPositive ? delta > 0 : delta < 0;
+          const badge = document.createElement('span');
+          badge.className = `fx-badge ${beneficial ? 'fx-pos' : 'fx-neg'}`;
+          const amount = definition.isMoney
+            ? formatRp(Math.abs(delta))
+            : `${Math.abs(delta)}${definition.isPercent ? '%' : ''}`;
+          badge.textContent = `${definition.icon} ${definition.label} ${delta > 0 ? '+' : '-'}${amount}`;
+          effectsBox.appendChild(badge);
+        });
         document.getElementById('modal-history').classList.remove('hidden');
         document.getElementById('btn-history-continue').focus({ preventScroll: true });
+      }
+
+      applyHistoricalEffects(effects) {
+        const applied = [];
+        Object.entries(effects).forEach(([stat, requestedDelta]) => {
+          if (!Number.isFinite(requestedDelta)) return;
+          const previous = this.state[stat];
+          if (typeof previous !== 'number') return;
+
+          const next = stat === 'saldo'
+            ? previous + requestedDelta
+            : this.clamp(previous + requestedDelta, 0, 100);
+          const delta = next - previous;
+          this.state[stat] = next;
+          if (delta !== 0) applied.push({ stat, delta });
+        });
+        return applied;
       }
 
       closeHistoricalEvent() {
@@ -3551,7 +3710,6 @@
           this.addJournal(year, age, "🎓 <strong>Tab Upgrade & Skill Terbuka!</strong> Mulai umur 5 tahun, kamu bisa mengikuti les dan pengembangan diri anak/remaja.");
         } else if (age === 18) {
           document.body.classList.add('hard-mode');
-          this.sfx.alert();
           this.canvas.spawnFx('MONEY', 10);
           this.showUnlockBanner(
             "🚨",
@@ -3560,8 +3718,6 @@
           this.addJournal(year, age, "🚨 <strong>Memasuki Dunia Dewasa (Hard Mode 18+):</strong> Semua tab aktivitas dewasa terbuka, biaya hidup tahunan (kos, makan, inflasi, BPJS) mulai dipotong!");
         } else {
           document.getElementById('unlock-banner').classList.add('hidden');
-          if (this.econ.type === 'gawat') this.sfx.alert();
-          else this.sfx.click();
         }
 
         let income = 0;
@@ -3634,13 +3790,18 @@
         this.switchMobileTab('story');
 
         if (this.checkEndGame()) {
-          this.updateAllUI();
+          const statsChanged = this.updateAllUI();
+          if (!statsChanged) this.sfx.click();
           return;
         }
 
         this.loadUniqueScenario(age);
-        this.updateAllUI();
-        this.showHistoricalEvent(year);
+        if (HISTORICAL_EVENTS[year]) {
+          this.showHistoricalEvent(year);
+        } else {
+          const statsChanged = this.updateAllUI();
+          if (!statsChanged) this.sfx.click();
+        }
       }
 
       loadUniqueScenario(age) {
@@ -3738,13 +3899,10 @@
           nextBtn.title = "";
 
           if (fx.saldo && fx.saldo > 0) {
-            this.sfx.coin();
             this.canvas.spawnFx('MONEY', 12);
           } else if ((fx.stress && fx.stress > 0) || (fx.health && fx.health < 0) || (fx.saldo && fx.saldo < 0)) {
-            this.sfx.alert();
             this.canvas.spawnFx('ALERT', 10);
           } else {
-            this.sfx.click();
             this.canvas.spawnFx('SPARK', 10);
           }
 
@@ -3850,7 +4008,6 @@
               if (item.fx.health) this.state.health = this.clamp(this.state.health + item.fx.health);
               if (item.fx.stress) this.state.stress = this.clamp(this.state.stress + item.fx.stress);
 
-              this.sfx.click();
               this.canvas.spawnFx('SPARK', 10);
               this.addJournal(this.state.year, this.state.age, `<strong>${item.title}:</strong> Berhasil diikuti dengan biaya ${formatRp(item.cost)}.`);
               this.checkEndGame();
@@ -3963,7 +4120,6 @@
               this.state.health = this.clamp(this.state.health + gig.health);
               if (gig.smartGain) this.state.smart = this.clamp(this.state.smart + gig.smartGain, 0, 100);
 
-              this.sfx.coin();
               this.canvas.spawnFx('MONEY', 8);
               const cutNote = cutPct > 0 ? ` (terpotong ${cutPct}% karena ${this.econ.status})` : '';
               this.addJournal(this.state.year, this.state.age, `<strong>${gig.title}:</strong> Cair sebesar <strong>${formatRp(finalPay)}</strong>${cutNote}. Stres +${gig.stress}%.`);
@@ -4006,7 +4162,6 @@
               if (hl.fx.stress) this.state.stress = this.clamp(this.state.stress + hl.fx.stress);
               if (hl.fx.rel) this.state.rel = this.clamp(this.state.rel + hl.fx.rel, 0, 100);
 
-              this.sfx.click();
               this.canvas.spawnFx('SPARK', 10);
               this.addJournal(this.state.year, this.state.age, `<strong>${hl.title}:</strong> Pikiran lebih segar dan stres berkurang!`);
               this.updateAllUI();
@@ -4037,7 +4192,6 @@
               run: () => {
                 this.state.saldo -= 1000000;
                 this.state.assets += 1000000;
-                this.sfx.coin();
                 this.addJournal(this.state.year, this.state.age, "🪙 Membeli Emas & Reksa Dana senilai Rp 1.000.000.");
               }
             },
@@ -4050,7 +4204,6 @@
                 this.state.saldo -= 8000000;
                 this.state.assets += 8000000;
                 this.state.rel = this.clamp(this.state.rel + 3, 0, 100);
-                this.sfx.coin();
                 this.addJournal(this.state.year, this.state.age, "🏪 Membuka kemitraan UMKM senilai Rp 8.000.000.");
               }
             },
@@ -4064,7 +4217,6 @@
                 this.state.debt += 3500000;
                 this.state.stress = this.clamp(this.state.stress + 18);
                 this.state.happy = this.clamp(this.state.happy - 10);
-                this.sfx.alert();
                 this.addJournal(this.state.year, this.state.age, "💣 <strong>Mencairkan Pinjol Rp 2.500.000!</strong> Bunga pinjaman & tekanan mental siap menghantui.");
               }
             },
@@ -4078,7 +4230,6 @@
                 this.state.saldo -= pay;
                 this.state.debt -= pay;
                 this.state.stress = this.clamp(this.state.stress - 8);
-                this.sfx.coin();
                 this.addJournal(this.state.year, this.state.age, `✅ Membayar cicilan utang sebesar <strong>${formatRp(pay)}</strong>. Sisa utang: ${formatRp(this.state.debt)}.`);
               }
             }
@@ -4316,6 +4467,65 @@
         document.getElementById('mob-act-btn').textContent = s.age >= 5 ? `⚡ Aktivitas (${s.energy})` : "🔒 Aktivitas";
 
         this.renderActivityPanel();
+        return this.animateStatChanges(s);
+      }
+
+      animateStatChanges(state) {
+        const definitions = [
+          { key: 'health', id: 'val-health', label: 'Kesehatan', suffix: '%' },
+          { key: 'happy', id: 'val-happy', label: 'Bahagia', suffix: '%' },
+          { key: 'smart', id: 'val-smart', label: 'Pintar', suffix: '' },
+          { key: 'rel', id: 'val-rel', label: 'Relasi', suffix: '' },
+          { key: 'stress', id: 'val-stress', label: 'Stres', suffix: '%' },
+          { key: 'saldo', id: 'stat-saldo', label: 'Saldo', suffix: '', isMoney: true }
+        ];
+        const current = Object.fromEntries(definitions.map(({ key }) => [key, state[key]]));
+        const previous = this.lastRenderedStats;
+        this.lastRenderedStats = current;
+        if (!previous) return false;
+
+        const moods = new Set();
+        definitions.forEach(definition => {
+          const delta = current[definition.key] - previous[definition.key];
+          if (delta === 0) return;
+
+          const beneficial = definition.key === 'stress' ? delta < 0 : delta > 0;
+          moods.add(beneficial ? 'gain' : 'loss');
+
+          const value = document.getElementById(definition.id);
+          const container = value.closest(definition.isMoney ? '.saldo-box' : '.stat-item');
+          container.querySelector('.stat-change-pop')?.remove();
+          container.classList.remove('stat-gain', 'stat-loss');
+          value.classList.remove('stat-value-pop');
+          void container.offsetWidth;
+
+          const mood = beneficial ? 'gain' : 'loss';
+          container.classList.add(mood === 'gain' ? 'stat-gain' : 'stat-loss');
+          value.classList.add('stat-value-pop');
+
+          const pop = document.createElement('span');
+          pop.className = `stat-change-pop ${mood}`;
+          pop.setAttribute('aria-hidden', 'true');
+          const amount = definition.isMoney
+            ? formatRp(Math.abs(delta))
+            : `${Math.abs(delta)}${definition.suffix}`;
+          pop.textContent = `${definition.label} ${delta > 0 ? '+' : '-'}${amount}`;
+          container.appendChild(pop);
+
+          const animationId = String(++this.statAnimationId);
+          container.dataset.statAnimationId = animationId;
+          window.setTimeout(() => {
+            if (container.dataset.statAnimationId !== animationId) return;
+            container.classList.remove('stat-gain', 'stat-loss');
+            value.classList.remove('stat-value-pop');
+            pop.remove();
+          }, 1150);
+        });
+
+        if (moods.size) {
+          this.sfx.statChange(moods.size > 1 ? 'mixed' : moods.values().next().value);
+        }
+        return moods.size > 0;
       }
 
       loop() {
